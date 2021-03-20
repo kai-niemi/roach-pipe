@@ -1,0 +1,49 @@
+########################
+# Spring boot properties
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+########################
+spring:
+  main:
+    banner-mode: console
+  output:
+    ansi:
+      enabled: ALWAYS
+  datasource:
+    # One datasource per URL created on-demand
+    hikari:
+      maximum-pool-size: 8
+      minimum-idle: 0
+##################################
+server:
+  compression:
+    enabled: true
+    min-response-size: 10
+  port: 8090
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: always
+    path: /error
+##################################
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: conditions,env,health,metrics,threaddump,prometheus
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+##################################
+logging:
+  file:
+    name: roach-pipe.log
+  logback:
+    rollingpolicy:
+      max-history: 3
