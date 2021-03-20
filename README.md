@@ -94,7 +94,7 @@ Now you should have a populated PostgreSQL tpcc database and an empty one in Coc
     
 ## 5. Build and start the proxy
 
-    ./roach-pipe.jar
+    target/roach-pipe.jar
 
 It's API root endpoint is now available at:
 
