@@ -51,7 +51,7 @@ public class DataSourceFactory {
         return traceLogger.isDebugEnabled() ?
                 ProxyDataSourceBuilder
                         .create(ds)
-                        .name("SQL-Trace")
+                        .name("SQL")
                         .asJson()
                         .countQuery()
                         .logQueryBySlf4j(SLF4JLogLevel.DEBUG, "io.roach.sql_trace")

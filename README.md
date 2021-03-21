@@ -106,7 +106,7 @@ Tip: You can change the port with:
 
 Test the HTTP proxy with curl:
 
-    curl --location --request GET 'http://localhost:8090/download?url=jdbc:postgresql://localhost:5432/tpcc&user=name&password=secret&table=customer'
+    curl --location --request GET 'http://localhost:8090/copy?url=jdbc:postgresql://localhost:5432/tpcc&user=name&password=secret&table=customer'
 
 It takes the following params:
     
@@ -146,7 +146,7 @@ Now lets import the customers table:
         c_delivery_cnt,
         c_data)
     CSV DATA (
-        'http://localhost:8090/download?url=jdbc:postgresql://localhost:5432/tpcc&user=postgres&password=xxxx&table=customer'
+        'http://localhost:8090/copy?url=jdbc:postgresql://localhost:5432/tpcc&user=postgres&password=xxxx&table=customer'
     );
 
             job_id       |  status   | fraction_completed | rows  | index_entries |  bytes
@@ -157,6 +157,10 @@ Now lets import the customers table:
     Time: 5.321s total (execution 5.321s / network 0.000s)
 
 Done! For one table, at least.
+
+# Limitations
+
+- Very large result sets may cause OOMs, use `maxRows` query parameter to set a limit
 
 # Terms of Use
 

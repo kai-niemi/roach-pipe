@@ -32,9 +32,9 @@ public class IndexController {
                 .index())
                 .withSelfRel());
 
-        index.add(linkTo(methodOn(DownloadController.class)
+        index.add(linkTo(methodOn(CopyController.class)
                 .downloadResource(Collections.emptyMap()))
-                .withRel(LinkRels.DOWNLOAD_REL));
+                .withRel(LinkRels.COPY_REL));
 
         return new ResponseEntity<>(index, HttpStatus.OK);
     }

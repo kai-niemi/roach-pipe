@@ -11,6 +11,7 @@ public class FilterConfig {
     public FilterRegistrationBean<CommonsRequestLoggingFilter> loggingFilter() {
         FilterRegistrationBean<CommonsRequestLoggingFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(requestLoggingFilter());
+        registrationBean.addUrlPatterns("/copy/*");
         registrationBean.addUrlPatterns("/download/*");
         return registrationBean;
     }

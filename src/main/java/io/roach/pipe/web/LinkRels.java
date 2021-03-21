@@ -1,7 +1,7 @@
 package io.roach.pipe.web;
 
 public abstract class LinkRels {
-    public static final String DOWNLOAD_REL = "download";
+    public static final String COPY_REL = "copy";
 
     public static final String ACTUATOR_REL = "actuator";
 

@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +31,19 @@ import io.roach.pipe.io.JdbcCursorReader;
 import io.roach.pipe.io.ResourceResolver;
 
 @RestController
-@RequestMapping("/download")
-public class DownloadController {
+public class CopyController {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final String quoteChar = "\"";
+
+    private final String escapeChar = "\"\"";
+
+    private final Map<String, DataSource> dataSourceCache = new ConcurrentHashMap<>();
 
     @Autowired
     private DataSourceFactory dataSourceFactory;
 
-    @GetMapping
+    @GetMapping(value = {"/copy", "/download"})
     public ResponseEntity<StreamingResponseBody> downloadResource(@RequestParam Map<String, String> allParams)
             throws IOException {
         final String url = allParams.get("url");
@@ -72,17 +78,23 @@ public class DownloadController {
         };
     }
 
-    private final String quoteChar = "\"";
+    private String toDataSourceKey(String url) {
+        if (url.startsWith("jdbc:")) {
+            URI u = URI.create(url.substring(5));
+            return u.getScheme() + ":" + u.getHost() + ":" + u.getPort();
+        }
+        return url;
+    }
 
-    private final String escapeChar = "\"\"";
-
-    private final Map<String, DataSource> dataSourceCache = new ConcurrentHashMap<>();
+    private int toNumber(String numStr) {
+        return Integer.parseInt(numStr.replace("_", ""));
+    }
 
     private StreamingResponseBody copyQueryResult(Map<String, String> allParams) {
         final String url = allParams.get("url");
-        final int maxRows = Integer.parseInt(allParams.getOrDefault("maxRows", "-1"));
-        final int rowOffset = Integer.parseInt(allParams.getOrDefault("rowOffset", "0"));
-        final int fetchSize = Integer.parseInt(allParams.getOrDefault("fetchSize", "256"));
+        final int maxRows = toNumber(allParams.getOrDefault("maxRows", "-1"));
+        final int rowOffset = toNumber(allParams.getOrDefault("rowOffset", "0"));
+        final int fetchSize = toNumber(allParams.getOrDefault("fetchSize", "256"));
 
         final String query;
         if (allParams.containsKey("query")) {
@@ -96,7 +108,7 @@ public class DownloadController {
         }
 
         final DataSource dataSource = dataSourceCache
-                .computeIfAbsent(url, k -> dataSourceFactory.createDataSource(allParams));
+                .computeIfAbsent(toDataSourceKey(url), k -> dataSourceFactory.createDataSource(allParams));
 
         logger.info("Connecting to source database [{}] to copy [{}] from offset {} to limit {} with fetch size {}",
                 dataSourceFactory.databaseVersion(dataSource), query, rowOffset, maxRows, fetchSize);
