@@ -111,7 +111,7 @@ public class JdbcCursorReader {
                 if (this.rowOffset != resultSet.getRow()) {
                     throw new IllegalStateException("Unexpected cursor position");
                 }
-                writer.write(item);
+                writer.write(resultSet, item);
             }
 
             DataSourceUtils.releaseConnection(connection, dataSource);

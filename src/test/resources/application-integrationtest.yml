@@ -1,0 +1,16 @@
+########################
+# Spring boot properties
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+########################
+roach:
+  datasource:
+    url: jdbc:postgresql://192.168.1.99:5432/roach_pipe?sslmode=disable
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: root
+    configuration:
+      connection-test-query: SELECT 1
+      connection-timeout: 15000
+      validation-timeout: 5000
+      max-lifetime: 30000
+      maximum-pool-size: 25

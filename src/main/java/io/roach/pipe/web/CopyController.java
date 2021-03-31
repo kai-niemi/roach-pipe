@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +22,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import io.roach.pipe.config.DataSourceFactory;
+import io.roach.pipe.io.CsvOutput;
 import io.roach.pipe.io.JdbcCursorReader;
 import io.roach.pipe.io.ResourceResolver;
 
@@ -121,41 +122,18 @@ public class CopyController {
                 .setFetchSize(fetchSize);
 
         return outputStream -> {
-            final OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(outputStream));
+            final CsvOutput csvOutput = new CsvOutput(
+                    new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(outputStream))));
             reader.read((rs, rowNum) -> {
-                // From the source DB
                 List<Object> fields = new ArrayList<>();
                 int cols = rs.getMetaData().getColumnCount();
                 for (int i = 1; i <= cols; i++) {
                     fields.add(rs.getObject(i));
                 }
                 return fields;
-            }, values -> {
-                // To the target DB
-                boolean first = true;
-                for (Object field : values) {
-                    if (!first) {
-                        writer.write(",");
-                    } else {
-                        first = false;
-                    }
-                    if (field instanceof String) {
-                        String str = ((String) field);
-                        if (str.matches(".*[,\"].*")) {
-                            writer.write(quoteChar);
-                        }
-                        writer.write(str.replaceAll("\"", escapeChar));
-                        if (str.matches(".*[,\"].*")) {
-                            writer.write(quoteChar);
-                        }
-                    } else {
-                        writer.write(String.valueOf(field));
-                    }
-                }
-                writer.write("\n");
-            });
+            }, csvOutput);
 
-            writer.flush();
+            csvOutput.close();
         };
     }
 }

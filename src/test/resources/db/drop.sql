@@ -1,0 +1,2 @@
+DROP TABLE attachment CASCADE;
+DROP TABLE chat CASCADE;
