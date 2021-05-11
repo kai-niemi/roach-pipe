@@ -156,11 +156,9 @@ Now lets import the customers table:
     
     Time: 5.321s total (execution 5.321s / network 0.000s)
 
-Done! For one table, at least.
-
 # Limitations
 
-- Very large result sets may cause OOMs, use `maxRows` query parameter to set a limit
+- Very large result sets may cause client-side OOMs, use `maxRows` query parameter to set a limit.
 
 # Terms of Use
 

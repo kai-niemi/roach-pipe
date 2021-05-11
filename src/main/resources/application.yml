@@ -17,7 +17,7 @@ spring:
 server:
   compression:
     enabled: true
-    min-response-size: 10
+    min-response-size: 23
   port: 8090
   error:
     whitelabel:

@@ -35,10 +35,6 @@ import io.roach.pipe.io.ResourceResolver;
 public class CopyController {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final String quoteChar = "\"";
-
-    private final String escapeChar = "\"\"";
-
     private final Map<String, DataSource> dataSourceCache = new ConcurrentHashMap<>();
 
     @Autowired
@@ -97,6 +93,12 @@ public class CopyController {
         final int rowOffset = toNumber(allParams.getOrDefault("rowOffset", "0"));
         final int fetchSize = toNumber(allParams.getOrDefault("fetchSize", "256"));
 
+        final String delimiter = allParams.getOrDefault("delimiter", ",");
+        final String quoteChar = allParams.getOrDefault("quoteChar", "\"");
+        final String escapeChar = allParams.getOrDefault("escapeChar", "\"\"");
+        final boolean printHeader = Boolean.parseBoolean(allParams.getOrDefault("printHeader", "false"));
+        final boolean printQuotes = Boolean.parseBoolean(allParams.getOrDefault("printQuotes", "false"));
+
         final String query;
         if (allParams.containsKey("query")) {
             query = allParams.get("query");
@@ -123,7 +125,13 @@ public class CopyController {
 
         return outputStream -> {
             final CsvOutput csvOutput = new CsvOutput(
-                    new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(outputStream))));
+                    new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(outputStream))))
+                    .setDelimiter(delimiter)
+                    .setEscapeChar(escapeChar)
+                    .setPrintHeader(printHeader)
+                    .setPrintQuotes(printQuotes)
+                    .setQuoteChar(quoteChar);
+
             reader.read((rs, rowNum) -> {
                 List<Object> fields = new ArrayList<>();
                 int cols = rs.getMetaData().getColumnCount();

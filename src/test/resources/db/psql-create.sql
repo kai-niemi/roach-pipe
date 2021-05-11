@@ -7,27 +7,25 @@ create table attachment
     data bytea
 );
 
-insert into attachment (id,name,data)
-values
-        (1,'a', E'\\xDEADBEEF'),
-        (2,'b', E'\\xCAFEBABE'),
-        (3,'c', E'\\xFACEFEED');
+insert into attachment (id, name, data)
+values (1, 'a', E'\\xDEADBEEF'),
+       (2, 'b', E'\\xCAFEBABE'),
+       (3, 'c', E'\\xFACEFEED');
 
-insert into attachment (id,name,data)
-values (
-        1,'a', E'\\xDEADBEEF');
+insert into attachment (id, name, data)
+values (1, 'a', E'\\xDEADBEEF');
 
 
 -- ################################################
 
 create table chat
 (
-    id       integer primary key,
+    id      integer primary key,
     message jsonb
 );
 
-insert into chat (id,message)
-values (1,'[
+insert into chat (id, message)
+values (1, '[
     {
         "title": "Sleeping Beauties",
         "genres": [
@@ -51,8 +49,8 @@ values (1,'[
     }
 ]');
 
-insert into chat (id,message)
-values (2,'[
+insert into chat (id, message)
+values (2, '[
     {
         "title": "Sleeping Beauties",
         "genres": [
